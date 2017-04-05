@@ -3,6 +3,10 @@
 *.a
 *.so
 
+# Temporary editor files
+.*.sw*
+*~
+
 # Folders
 _obj
 _test
