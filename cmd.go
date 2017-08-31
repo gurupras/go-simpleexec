@@ -51,3 +51,16 @@ func (cmd *Cmd) Start() (err error) {
 	}
 	return
 }
+
+// The logic in this function is not perfect
+// We probably need to handle parent errors and child errors separately
+func (cmd *Cmd) Wait() (err error) {
+	if cmd.Parent != nil {
+		err = cmd.Parent.Wait()
+	}
+	_err := cmd.Cmd.Wait()
+	if err != nil || _err != nil {
+		err = fmt.Errorf("Parent returned: %v  Child returned: %v", err, _err)
+	}
+	return
+}
