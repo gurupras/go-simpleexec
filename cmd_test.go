@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/require"
 )
@@ -79,4 +80,30 @@ func TestComplexPipe(t *testing.T) {
 	require.Nil(err)
 
 	require.Equal("7\n", buf.String())
+}
+
+//FIXME: Currently requires manually checking for zombies
+func TestForZombies(t *testing.T) {
+	start := time.Now()
+	for {
+		now := time.Now()
+		if now.Sub(start) > 2*time.Second {
+			break
+		}
+		TestComplexPipe(t)
+		time.Sleep(100 * time.Millisecond)
+	}
+}
+
+func TestSu(t *testing.T) {
+	require := require.New(t)
+
+	buf := bytes.NewBuffer(nil)
+	cmd := ParseCmd("/bin/su -c 'ls' - guru")
+	cmd.Stdout = buf
+	require.NotNil(cmd)
+	cmd.Start()
+	cmd.Wait()
+
+	fmt.Println(buf.String())
 }
