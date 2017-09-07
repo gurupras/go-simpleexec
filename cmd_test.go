@@ -95,6 +95,24 @@ func TestForZombies(t *testing.T) {
 	}
 }
 
+//TODO: Add more complex testing for parent error and child error
+func TestWaitError(t *testing.T) {
+	require := require.New(t)
+
+	// First test single command error
+	cmd := ParseCmd("/bin/false")
+	require.NotNil(cmd)
+
+	buf := bytes.NewBuffer(nil)
+	cmd.Stdout = buf
+
+	err := cmd.Start()
+	require.Nil(err)
+
+	err = cmd.Wait()
+	require.NotNil(err)
+}
+
 func TestSu(t *testing.T) {
 	require := require.New(t)
 
